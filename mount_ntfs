@@ -1,0 +1,49 @@
+#!/bin/bash
+# Design by yy(奕弈)
+# $1 is the param the disk 
+# this file will auto mount ntfs(windows's file disk) in the way of rw
+
+# first, we should get disk info which has been mounted
+
+info=$( mount | grep ntfs | grep 'read-only' | awk '{print $1}' )
+mount_path=$( mount | grep ntfs | grep 'read-only' | awk '{print $3}' )
+
+# check there are some disk that are read-only
+
+if [ -z '$info' ]
+then
+	echo "Please mount a disk(windows's disk and it should read-only) at least!!!"
+	exit 1
+fi
+
+# start handle
+
+for disk_name in $info
+do
+	# first umount disk
+	sudo umount $disk_name
+done
+
+# check mount point is exists or not
+# if it's not exists, create
+
+for mount_name in $mount_path
+do
+	if [ ! -d "$mount_name" ]
+	then
+		sudo mkdir $mount_name
+	fi
+done
+
+# finally, we mount disk in the way of rw
+
+mount_path=($mount_path)
+i=0
+for name in $info
+do
+	sudo mount -t ntfs -o rw,auto,nobrowse $name ${mount_path[$i]}
+    # create a link on desktop
+	link_name=$( echo ${mount_path[$i]} | cut -b 10- )
+    sudo ln -s ${mount_path[$i]} /Users/yy/Desktop/$link_name
+	i=`expr $i + 1`
+done
