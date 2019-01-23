@@ -10,10 +10,17 @@ mount_path=$( mount | grep ntfs | grep 'read-only' | awk '{print $3}' )
 
 # check there are some disk that are read-only
 
-if [ -z '$info' ]
+if [ -z "$info" ]
 then
 	echo "Please mount a disk(windows's disk and it should read-only) at least!!!"
 	exit 1
+fi
+
+if [ -z "$1" ]
+then
+	in_path=$1
+else
+	in_path=~/Desktop
 fi
 
 # start handle
@@ -44,6 +51,6 @@ do
 	sudo mount -t ntfs -o rw,auto,nobrowse $name ${mount_path[$i]}
     # create a link on desktop
 	link_name=$( echo ${mount_path[$i]} | cut -b 10- )
-    sudo ln -s ${mount_path[$i]} /Users/yy/Desktop/$link_name
+    sudo ln -s ${mount_path[$i]} $in_path/$link_name
 	i=`expr $i + 1`
 done
