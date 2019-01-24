@@ -1,0 +1,135 @@
+#!/bin/bash
+PHP_PATH=/usr/local/php71
+NGINX_PATH=/usr/local/nginx
+MYSQL=/usr/local/mysql
+
+function getNginxStatus(){
+	echo $( sudo lsof -i :80 | grep nginx | grep -v grep )
+}
+
+function getPhpfpmStatus(){
+	echo $( sudo ps aux | grep "php-fpm" | grep -v grep )
+}
+
+function getMysqlStatus(){
+	echo $( lsof -i :3306 | grep mysql | grep -v grep )
+}
+
+function startLnmp(){
+	nginx_info=$( getNginxStatus )
+	if [ -n "$nginx_info" ]
+	then
+		echo "nginx already started !"
+	else
+		echo "starting nginx"
+		sudo nginx
+		echo "nginx start successful !"
+	fi
+	phpfpm_info=$( getPhpfpmStatus )
+	if [ -n "$phpfpm_info" ]
+	then
+		echo "php-fpm already started !"
+	else
+		echo "starting php-fpm"
+		sudo $PHP_PATH/sbin/php-fpm
+		echo "php-fpm start successful !"
+	fi
+	mysql_info=$( getMysqlStatus )
+	if [ -n "$mysql_info" ]
+	then
+		echo "mysql already started !"
+	else
+		echo "starting mysql"
+		mysqld start >/dev/null
+		echo "mysql start successful !"
+	fi
+}
+
+function restartLnmp(){
+	info=$( getNginxStatus )
+	if [ -n "$info" ]
+	then
+		echo "reload nginx"
+		sudo nginx -s reload
+		echo "nginx reload successful !"
+	else
+		echo "starting nginx"
+		sudo nginx
+		echo "nginx start successful !"
+	fi
+    info=$( getPhpfpmStatus )
+	if [ -n "$info" ]
+	then
+		echo "stopping php-fpm"
+		sudo killall -9 php-fpm
+		echo "stop php-fpm successful !"
+	fi
+	echo "starting php-fpm"
+	sudo $PHP_PATH/sbin/php-fpm
+    echo "php-fpm start successful ! "
+	info=$( getMysqlStatus )
+	if [ -n "$info" ]
+	then
+		echo "restarting mysql"
+		mysqld restart
+		echo "restart mysql successful !"
+	else
+		echo "start mysql"
+		mysqld start
+		echo "mysql start successful 1"
+	fi
+}
+
+function stopLnmp(){
+	nginx_info=$( getNginxStatus )
+	if [ -n "$nginx_info" ]
+	then
+		echo "stopping nginx"
+		sudo nginx -s stop
+		echo "nginx stop successful !"
+	else
+		echo "No such nginx process !"
+	fi
+	phpfpm_info=$( getPhpfpmStatus )
+	if [ -n "$phpfpm_info" ]
+	then
+		echo "stoping php-fpm"
+		sudo killall -9 php-fpm
+		echo "php-fpm stop successful !"
+	else
+		echo "No such php-fpm process !"
+	fi
+	mysql_info=$( getMysqlStatus )
+	if [ -n "$mysql_info" ]
+	then
+		echo "stopping mysql"
+		mysqld stop >/dev/null
+		echo "mysql stop successful !"
+	else
+		echo "No such mysql process"
+	fi
+}
+
+if [ -z "$1" ]
+then
+    echo "Please input a param like start..."
+	exit 1
+fi
+
+# first, stop nginx
+# echo "shutdown nginx"
+if [ "$1" == "restart" ]
+then
+    restartLnmp
+fi
+
+if [ "$1" == "start" ]
+then
+	startLnmp
+fi
+
+if [ "$1" == "stop" ]
+then
+	stopLnmp
+fi
+
