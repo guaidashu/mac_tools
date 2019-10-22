@@ -1,0 +1,70 @@
+#!/bin/bash
+# 此工具是 用来统计文件夹或者文件数量的 工具，在某些情况下，我们需要进行统计操作。
+# 现在我正在寻找一份工作，如果您认为我满足你的要求，可以联系我 1023767867@qq.com
+# 参数1 为要统计的文件夹路径
+# 参数2 为统计模式， 1为统计文件，2为统计文件夹，all为统计所有(文件+文件夹)
+#
+FILEPATH=$1
+
+MODE=$2
+
+ISSHOW=$3
+
+if [ "$FILEPATH" == "-h" ] || [ "$FILEPATH" == "--help" ]
+then
+    echo "参数1 为要统计的文件夹路径"
+    echo "  默认为当前路径 ./ "
+    echo ""
+    echo "参数2 为统计模式"
+    echo "  1为统计文件"
+    echo "  2为统计文件夹"
+    echo "  all为统计所有(文件+文件夹)"
+    echo "  默认为 all "
+    echo ""
+    echo "参数3 为是否统计隐藏文件"
+    echo "  0为不统计"
+    echo "  1为统计"
+    echo "  默认为0"
+    echo ""
+    echo "PS: 默认忽略了 . 和 .. 文件夹"
+    exit 0
+fi
+
+if [ -z "$FILEPATH" ]
+then
+    FILEPATH=./
+fi
+
+if [ -z "$MODE" ]
+then
+    MODE="all"
+fi
+
+if [ "$ISSHOW" == "1" ]
+then
+    exec="ls -la"
+else
+    exec="ls -l"
+fi
+
+if [ "$MODE" == "1" ]
+then
+    data=$( $exec $FILEPATH | grep '^-' | wc -l )
+elif [ "$MODE" == "2" ]
+then
+    data=$( $exec $FILEPATH | grep '^d' | wc -l )
+elif [ "$MODE" == "all" ]
+then
+    data=$( $exec $FILEPATH | wc -l )
+    data=`expr $data - 1`
+else
+    data=$( $exec $FILEPATH | wc -l )
+    data=`expr $data - 1`
+fi
+
+if [ "$ISSHOW" == "1" ] && [ "$MODE" == "all" ]
+then
+    data=`expr $data - 2`
+fi
+
+echo $data

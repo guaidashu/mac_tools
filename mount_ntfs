@@ -1,7 +1,9 @@
 #!/bin/bash
 # Design by yy(奕弈)
+# Now I'm looking for a good job. If you think I'm ok, please contact me by email '1023767856@qq.com'.
+
 # $1 is the param the disk 
-# this file will auto mount ntfs(windows's file disk) in the way of rw
+# The tool will auto mount ntfs(windows's file disk) in the way of rw on mac.
 
 # first, we should get disk info which has been mounted
 

@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# The tool is used to conventient me to manage lnmp.
+# Hope it will help you.
+# And now I'm looking for a good job. If you think I'm ok, please contact me by email '1023767856@qq.com'.
+
 PHP_PATH=/usr/local/php71
 NGINX_PATH=/usr/local/nginx
 MYSQL=/usr/local/mysql
