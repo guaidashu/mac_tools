@@ -1,0 +1,47 @@
+#!/bin/bash
+# set the path of redis
+redis_path=/usr/local/redis
+redis_conf_path=$redis_path/src/redis.conf
+
+function startRedis()
+{
+    $redis_path/src/redis-server $redis_conf_path
+}
+
+function stopRedis()
+{
+    redis_info=$( ps aux | grep redis-server | grep -v grep | awk '{print $2}' )
+    if [ -z "$redis_info" ]
+    then
+        echo "No such process"
+        exit 1
+    fi
+    for pid in $redis_info
+    do
+        kill -9 $pid
+    done
+}
+
+function clientRedis()
+{
+    $redis_path/src/redis-cli
+}
+
+if [ -z "$1" ]
+then
+    echo "Please input a command..."
+    exit 1
+fi
+
+if [ "start" == "$1" ]
+then
+    startRedis
+elif [ "stop" == "$1" ]
+then
+    stopRedis
+elif [ "cli" == "$1" ]
+then
+    clientRedis
+else
+    echo "Please input start or stop"
+fi

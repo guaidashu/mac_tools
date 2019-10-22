@@ -1,0 +1,27 @@
+#!/bin/bash
+
+MONGODB_PATH=/usr/local/mongodb
+function startMongodb(){
+    $MONGODB_PATH/bin/mongod -f $MONGODB_PATH/bin/mongodb.conf
+}
+# start by auth
+function startMongodbAuth(){
+    $MONGODB_PATH/bin/mongod -f $MONGODB_PATH/bin/mongodb.conf --auth
+}
+
+
+if [ -z "$1" ]
+then
+    echo "Please input a command like start"
+fi
+
+if [ "$1" == "start" -a "$2" == "" ]
+then
+    startMongodbAuth
+elif [ "$1" == "start" -a "$2" == "admin" ]
+then
+    startMongodb
+else
+    echo "error command"
+fi
+
