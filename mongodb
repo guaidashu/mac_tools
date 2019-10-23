@@ -4,11 +4,16 @@ MONGODB_PATH=/usr/local/mongodb
 function startMongodb(){
     $MONGODB_PATH/bin/mongod -f $MONGODB_PATH/bin/mongodb.conf
 }
+
 # start by auth
 function startMongodbAuth(){
     $MONGODB_PATH/bin/mongod -f $MONGODB_PATH/bin/mongodb.conf --auth
 }
 
+#stop 
+function stopMongodb(){
+    $MONGODB_PATH/bin/mongod -f $MONGODB_PATH/bin/mongodb.conf --shutdown
+}
 
 if [ -z "$1" ]
 then
@@ -21,6 +26,9 @@ then
 elif [ "$1" == "start" -a "$2" == "admin" ]
 then
     startMongodb
+elif [ "$1" == "stop" ]
+then
+    stopMongodb
 else
     echo "error command"
 fi
